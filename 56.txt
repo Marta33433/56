@@ -1,0 +1,495 @@
+Zadatak sa TABELAMA
+$(document).ready(function () {
+    fetch('https://jsonplaceholder.typicode.com/comments')
+        .then((response) => {
+            return response.json();
+        })
+        .then((myJson) => {
+            // console.log(myJson);
+            var tableData = "";
+            var todoTable = document.getElementById("todoTable");
+            $.each(myJson, function (index, todoItem) {
+                tableData += '<tr><th class="text-bold">' + todoItem.postId + '</th><td>' +
+                    todoItem.id + '</td><td>' +
+                    todoItem.name + '</td><td>' +
+                    todoItem.email + '</td>' +
+                    '<td><a href="#" class="btn btn-success" style="width:160px;" onclick="alert(`' + todoItem.body + '`);">Show Message</a></td></tr>';
+            });
+            todoTable.innerHTML = tableData;
+        });
+});
+function ShowMessage(message) {
+    window.alert(message);}
+
+
+
+---------------------------
+
+KARTICE POVLACENJE IZ TODOS-a
+Show todos from to  FILTERS TODOS
+COMPLETED ONLY NOT               COMPLETED ONLY           SHOW ALL
+$(document).ready(function () {
+    var filter = 0;
+    var fromTodoId = parseInt($("#fromTodoId").val());
+    var toTodoId = parseInt($("#toTodoId").val());
+    RetreiveData(filter, fromTodoId, toTodoId);
+
+    $("#showTodosInRange").click(function () {
+        var filter = 0;
+        var fromTodoId = parseInt($("#fromTodoId").val());
+        var toTodoId = parseInt($("#toTodoId").val());
+        RetreiveData(filter, fromTodoId, toTodoId);
+    });
+
+    $("#showCompleted").click(function () {
+        var filter = 1;
+        var fromTodoId = parseInt($("#fromTodoId").val());
+        var toTodoId = parseInt($("#toTodoId").val());
+        RetreiveData(filter, fromTodoId, toTodoId);
+    });
+
+    $("#showNotCompleted").click(function () {
+        var filter = 3;
+        var fromTodoId = parseInt($("#fromTodoId").val());
+        var toTodoId = parseInt($("#toTodoId").val());
+        RetreiveData(filter, fromTodoId, toTodoId);
+    });
+
+    $("#showAll").click(function () {
+        var filter = 0;
+        var fromTodoId = parseInt($("#fromTodoId").val());
+        var toTodoId = parseInt($("#toTodoId").val());
+        RetreiveData(filter, fromTodoId, toTodoId);
+    });
+});
+function RetreiveData(filter, fromTodoId, toTodoId) {
+    fetch('https://jsonplaceholder.typicode.com/todos/')
+        .then((response) => {
+            return response.json();
+        })
+        .then((myJson) => {
+            var tableData = "";
+            var todoTable = document.getElementById("todoTable");
+            $.each(myJson, function (index, todoItem) {
+                if ((todoItem.id >= fromTodoId) && (todoItem.id <= toTodoId)) {
+                    if (filter == 0) {
+                    tableData += '<div class="col col-sm-6 col-sm-4 col-lg-4">' +
+         '<div class="card border-' + todoColor(todoItem.completed) + ' mb-3">' +
+                    '<div class="card-header">' +
+        '<h3 class="card-title">UserId: ' + todoItem.userId + '</h3>' + '</div>' +
+           '<div class="card-body text-' + todoColor(todoItem.completed) + '">' +
+                            '<h5>Id: ' + todoItem.id + '</h5>' +
+                    '<p class="card-text">' + todoItem.title + '</p>' + '</div>' +
+   '<div class="card-footer">' +
+ '<div class="text-center"><a href="#" class="btn btn-' + todoItemCompleted(todoItem.completed) + '</a></div>' +
+                            '</div>' +
+                            '</div></div>';
+                    }
+      if ((filter == 1) && (todoItem.completed == true)) {
+     tableData += '<div class="col col-sm-6 col-sm-4 col-lg-4">' +
+       '<div class="card border-' + todoColor(todoItem.completed) + ' mb-3">' +
+        '<div class="card-header">' +
+       '<h3 class="card-title">UserId: ' + todoItem.userId + '</h3>' + '</div>' +
+            '<div class="card-body text-' + todoColor(todoItem.completed) + '">' +
+               '<h5>Id: ' + todoItem.id + '</h5>' +
+              '<p class="card-text">' + todoItem.title + '</p>' + '</div>' +
+                 '<div class="card-footer">' +
+                 '<div class="text-center"><a href="#" class="btn btn-' + todoItemCompleted(todoItem.completed) + '</a></div>' +
+                            '</div>' +
+                            '</div></div>';
+                    }
+                    if ((filter == 3 && todoItem.completed == false)) {
+                tableData += '<div class="col col-sm-6 col-sm-4 col-lg-4">' +
+          '<div class="card border-' + todoColor(todoItem.completed) + ' mb-3">' +
+                    '<div class="card-header">' +
+       '<h3 class="card-title">UserId: ' + todoItem.userId + '</h3>' + '</div>' +
+            '<div class="card-body text-' + todoColor(todoItem.completed) + '">' +
+                      '<h5>Id: ' + todoItem.id + '</h5>' +
+               '<p class="card-text">' + todoItem.title + '</p>' + '</div>' +
+                            '<div class="card-footer">' +
+                 '<div class="text-center"><a href="#" class="btn btn-' + todoItemCompleted(todoItem.completed) + '</a></div>' +
+                            '</div>' +
+                            '</div></div>';
+                    }
+                }
+            });
+            todoTable.innerHTML = tableData;
+        });
+}
+
+function todoItemCompleted(completed) {
+    return completed == true ? 'success">Completed' : 'danger">Not Completed';
+}
+function todoColor(completed) {
+    return completed == true ? 'success' : 'danger';
+}
+
+
+
+
+
+
+-----------------------------------------------------
+Show message by email some email@gmail.com   FILTER MESSSGE   pa one plave kartice sa dugim opisom
+$(document).ready(function(){
+    let condition = $("#userEmail").val();
+    getAlbumAndPictures(condition);
+
+    $(".showComments").click(function(){
+        condition = $("#userEmail").val();
+        getAlbumAndPictures(condition);
+    });
+});
+function getAlbumAndPictures(condition){
+    let json = "https://jsonplaceholder.typicode.com/comments";
+    $.get(json, function(data){
+        //let min = $("#photoMin").val();
+        //let max = $("#photoMax").val();
+        let cardString='';
+        data.forEach((element, key) =>{
+            if (condition == ''){
+            cardString += BuildData(element);
+            }
+            else if (element.email.includes(condition)) {
+                cardString += BuildData(element);
+            }
+             });
+        $(".dataCards").html(cardString);
+    });
+}
+function BuildData(element){
+    let string =
+    `<div class="col col-md-6 col-lg-4 my-3">
+        <div class="card text-center h-100">
+            <div class="card-header">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        postID: ${element.postId}
+                        <span class="badge badge-primary badge-pill">${element.id}</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">${element.name}</h5>
+                <p class="card-text">${element.body}</p>
+            </div>
+            <div class="card-footer text-muted">
+         <a href="#" class="btn btn-primary d-block">${element.email}</a>
+            </div>
+        </div>
+    </div>`;
+    return string;
+}
+
+
+
+-------------------------------
+
+STRUJA       ima ono prevlacenje levo desno   I uyima se iy db json
+$(document).ready(function () {
+
+    var showByZones = document.getElementById("showByZones").checked;
+    WriteData(0, showByZones);
+
+    $("#showByZones").click(function () {
+        var valueToFilterBy = $("#filterByBillValue").val();
+        showByZones = document.getElementById("showByZones").checked;
+        WriteData(valueToFilterBy, showByZones);
+    });
+
+    $("#filterByBill").click(function () {
+        var valueToFilterBy = $("#filterByBillValue").val();
+        WriteData(valueToFilterBy, showByZones);
+    }
+    );
+});
+function WriteData(valueToFilterBy, showByZones) {
+    var htmlDataContainer = document.getElementById('potrosnjaEE');
+    var markupToWrite = '';
+
+    fetch('db.json')
+        .then(response => response.json())
+        .then(myJSON => {
+            //console.log(myJSON);
+            var myData = myJSON.potrosnjaMeseci;
+            //console.log(myData);
+            myData.forEach(element => {
+                //console.log(element);
+                if (valueToFilterBy == 0) {
+                    markupToWrite += MarkUp(element, showByZones);
+                } else if (element.ukupnoDinara >= valueToFilterBy) {
+                    markupToWrite += MarkUp(element, showByZones);
+                }
+            });
+            htmlDataContainer.innerHTML = markupToWrite;
+        });
+}
+function MarkUp(element, showByZones) {
+    var ukupnaPotrosnja = element.potrosnjaVisaTarifa + element.potrosnjaNizaTarifa;
+    return `
+    <div class="col-12 col-md-6 col-lg-4 mt-3">
+        <div class="card text-center h-100 border-${MarkupColor(ukupnaPotrosnja)}">
+            <div class="card-header text-uppercase text-${MarkupColor(ukupnaPotrosnja)}">
+                <h3>${element.id}. ${element.mesec}</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Potrošnja (viša tarifa)[kWh]
+          ${MarkupZone(ukupnaPotrosnja, element.potrosnjaVisaTarifa, showByZones)}
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Potrošnja (niža tarifa)[kWh]
+       ${MarkupZone(ukupnaPotrosnja, element.potrosnjaNizaTarifa, showByZones)}
+                    </li>
+         <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Obračunska snaga [kW]
+       <span class="badge badge-primary badge-pill">${element.obracunskaSnaga}</span>
+                    </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Račun [RSD]
+   <span class="badge badge-primary badge-pill">${element.ukupnoDinara}</span>
+                    </li> 
+                </ul>
+            </div>
+            <div class="card-footer text-muted text-center">
+                Uplatiti do: 05.02.2022.
+            </div>
+        </div>
+    </div>`;
+}
+function MarkupColor(ukupnaPotrosnja) {
+    if (ukupnaPotrosnja <= 350) {
+        return "success";
+    }
+    else if (ukupnaPotrosnja <= 1600) {
+        return "primary";
+    }
+    else {
+        return "danger";
+    }
+}
+function MarkupZone(ukupnaPotrosnja, potrosnjaZona, showZones) {
+    if (!showZones) {
+   return `<span class="badge badge-primary badge-pill">${potrosnjaZona}</span>`;
+    }
+    else {
+        if (ukupnaPotrosnja <= 350) {
+    return `<span class="badge badge-success badge-pill">${potrosnjaZona}</span>`;
+        }
+        else if (ukupnaPotrosnja <= 1600) {
+ return `<span class="badge badge-success badge-pill">${Math.round(350*potrosnjaZona/ukupnaPotrosnja)}</span>
+  <span class="badge badge-primary badge-pill ml-1">${Math.round(potrosnjaZona - 350*potrosnjaZona/ukupnaPotrosnja)}</span>`;
+        }
+        else {
+ return `<span class="badge badge-success badge-pill">${Math.round(350*potrosnjaZona/ukupnaPotrosnja)}</span>
+ <span class="badge badge-primary badge-pill ml-1">${Math.round(1250*potrosnjaZona/ukupnaPotrosnja)}</span>
+            <span class="badge badge-danger badge-pill ml-1">${Math.round(potrosnjaZona - 1600*potrosnjaZona/ukupnaPotrosnja)}</span>`;            
+        }  }}
+
+-------------------------------------------------
+STUDENT
+$(document).ready(function(){
+    var chkStudents = document.getElementById('showStudents');
+    WriteData(chkStudents.checked);
+
+    $("#showStudents").click(function(){
+        var chkStudents = document.getElementById('showStudents');
+        WriteData(chkStudents.checked);
+    });
+});
+
+function WriteData(chkCondition){
+    var htmlDataContainer = document.getElementById('dataCards');
+    markupToWrite = '';
+    fetch('db.json')
+    .then(response => response.json())
+    .then(myJSON => {
+        var myData = myJSON.webTeh;
+        myData.forEach(element => {
+            if(!chkCondition)
+            {
+                markupToWrite += MarkUp(element);
+            } else {
+                if(element.test1 > 7 && element.test2 > 7 && element.test3 > 15)
+            {
+                markupToWrite += MarkUp(element);
+            }
+        }
+        });
+
+        htmlDataContainer.innerHTML = markupToWrite;
+    });
+}
+
+function showStudents(element) {
+    if(element.test1 > 7 && element.test2 > 7 && element.test3 > 15)
+    {
+  return `<button type="button" class="btn btn-succes btn-block">Polozio sve testove:DA</button>`
+    } else {
+        return `<button type="button" class="btn btn-succes btn-block">Polozio sve testove:NE</button>`
+    }
+}
+function showApplePhones(element) {
+    if (element.Kategorija === "smartphones" && element.Proizvodjac === "Apple") {
+        return `<button type="button" class="btn btn-success btn-block">Dostupni Apple uređaji: DA</button>`;
+    } else {
+        return `<button type="button" class="btn btn-success btn-block">Dostupni Apple uređaji: NE</button>`;
+    }
+}
+
+
+
+
+
+function MarkUp(element){
+    return
+    `
+    <div class="col-12 col-md-6 col-lg-4"> \\predstavljane na razlicitm ekranima
+                <div class="card text-center">
+                    <div class="card-header">
+                        <p class="d-flex justify-content-between align-items-center">
+                            ${element.id}:
+         <span class="badge badge-primary badge-pill">${element.studentId}</span>
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">${element.name}<br />
+                            ${element.surname}</h5>
+                    </div>
+-----------------------------------
+                    // pod komentarom <div class="card-body">
+                    <h5 class="card-title">${element.DeviceName}<br />
+                        ${element.DeviceDescription}</h5>
+                </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Test 1: ${element.test1}</li>
+                        <li class="list-group-item">Test 2: ${element.test2}</li>
+                        <li class="list-group-item">Test 3: ${element.test3}</li>
+                    </ul>
+                    <div class="card-footer">
+                    ${showStudents(element)}
+                </div>
+                </div>
+            </div>
+        `;
+}
+
+
+
+------------------------------------------------------------------------------------------------------------------
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand col-9" href="#">Navbar</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item ">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Features</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled active">Contact </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <h2 style="text-align: center;">Contact Us</h2>
+      <p style="text-align: center;">Lorem ipsum doloem ipsius</p>
+
+<div class="container mb-4">      
+<div class="row">  
+<div class="card col-4" style="width: 18rem;">
+  <div class="card-body">
+    <h4>Get in Touch</h4>
+    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quaerat, ducimus.</p>
+    <h4>Address</h4>
+    <p>65 Svetog Save, Cacak, Serbia</p>
+    <h4>Email</h4>
+    <p>admin@ftn.edu.rs</p>
+    <h4>Phone</h4>
+    <p>+381(0)32 555 5555</p>
+    
+  </div>
+</div>
+<div class="card col-7 ml-5" >
+  <div class="card-body">
+    <h5 style="text-align: center;">Please to fill this check out next</h5>
+    <form class="mb-4">
+      <div class="row">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="First name">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Last name">
+        </div>
+      </div>
+    </form>
+    <form class="mb-2">
+      <div class="row">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Email">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="PhoneNumber">
+        </div>
+      </div>
+    </form>
+    <textarea class="form-control mb-2" id="exampleFormControlTextarea1" placeholder="Mesagges" rows="3"></textarea>
+    <button type="button" style="width: 100%;" class="btn btn-outline-danger">Submit</button>
+    
+  </div>
+</div>
+</div>
+</div>
+
+<div class="container mb-4">
+  <h1>Webtehstudentslist</h1>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+      <label class="form-check-label" for="defaultCheck1">
+        Studenti koji su polozili sva tri dela
+      </label>
+    </div>
+  </div>
+</div>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+    -->
+  </body>
+</html>
